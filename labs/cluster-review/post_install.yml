@@ -1,0 +1,43 @@
+- name: "Lab: Building a Highly Available Cluster"
+  hosts: nodes
+  remote_user: root
+  vars:
+    master: master1.lab.example.com
+
+  tasks:
+  - name: Check for OCP Services
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: true
+    when: inventory_hostname in groups['masters']
+    with_items:
+    - atomic-openshift-master-controllers
+    - atomic-openshift-master-api
+
+  - name: Re-add OpenShift package exclusions
+    command: "/usr/sbin/atomic-openshift-excluder exclude"
+
+  - name: Fix registry console
+    command: "oc set image --source=docker dc/registry-console registry-console=registry.lab.example.com:5000/openshift3/registry-console:v3.6"
+    when: inventory_hostname in groups['masters']
+
+  - name: Wait for registry-console to re-deploy
+    pause:
+      seconds: 15
+      prompt: "Waiting for the registry-console to re-deploy"
+
+  - name: Edit RHEL7 Image Streams
+    copy:
+      src: files/image-streams-rhel7.json
+      dest: /usr/share/openshift/examples/image-streams/image-streams-rhel7.json
+    register: rhel7_is_result
+    when: "master in inventory_hostname"
+
+  - name: delete_openshift_is
+    command: "/usr/bin/oc delete is -n openshift --all"
+    when: rhel7_is_result.changed and "master in inventory_hostname"
+
+  - name: create_rhel7_is
+    command: "/usr/bin/oc create -f /usr/share/openshift/examples/image-streams/image-streams-rhel7.json -n openshift"
+    when: rhel7_is_result.changed and "master in inventory_hostname"

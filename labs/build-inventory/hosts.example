@@ -1,0 +1,22 @@
+# hosts file for mycluster.com
+[OSEv3:children]
+masters
+etcd
+nodes
+nfs
+lb
+
+[OSEv3:vars]
+openshift_deployment_type=openshift-enterprise
+deployment_type=openshift-enterprise
+openshift_release=v3.6
+osm_cluster_network_cidr=10.128.0.0/14
+openshift_portal_net=172.30.0.0/16
+openshift_master_api_port=443
+openshift_master_console_port=8443
+openshift_master_cluster_public_hostname=console.mycluster.com
+openshift_master_cluster_hostname=console.mycluster.com
+openshift_master_default_subdomain=apps.mycluster.com
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_users={'admin': '$apr1$Y9pwjRCD$iqLLsX/vhUljsTxiYq9FY.','developer': '$apr1$AH9Loha.$GJNmEjjKjt/8LPET0lv751'}
+openshift_master_cluster_method=native

@@ -1,0 +1,78 @@
+# hosts file for mycluster.com
+[OSEv3:children]
+masters
+etcd
+nodes
+nfs
+lb
+
+[OSEv3:vars]
+openshift_deployment_type=openshift-enterprise
+deployment_type=openshift-enterprise
+openshift_release=v3.6
+osm_cluster_network_cidr=10.128.0.0/14
+openshift_portal_net=172.30.0.0/16
+openshift_master_api_port=443
+openshift_master_console_port=8443
+openshift_master_cluster_public_hostname=console.mycluster.com
+openshift_master_cluster_hostname=console.mycluster.com
+openshift_master_default_subdomain=apps.mycluster.com
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_users={'admin': '$apr1$Y9pwjRCD$iqLLsX/vhUljsTxiYq9FY.','developer': '$apr1$AH9Loha.$GJNmEjjKjt/8LPET0lv751'}
+openshift_master_cluster_method=native
+
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
+openshift_hosted_registry_storage_nfs_directory=/exports
+openshift_hosted_registry_storage_nfs_options='*(rw,root_squash)'
+openshift_hosted_registry_storage_volume_name=registry
+openshift_hosted_registry_storage_volume_size=10Gi
+
+openshift_docker_additional_registries=registry.mycluster.com:5000
+openshift_docker_insecure_registries=registry.mycluster.com:5000
+openshift_docker_blocked_registries=registry.access.redhat.com,docker.io
+oreg_url=registry.mycluster.com:5000/openshift3/ose-${component}:${version}
+openshift_examples_modify_imagestreams=true
+
+openshift_router_selector='region=infra'
+openshift_registry_selector='region=infra'
+
+openshift_set_node_ip=True
+
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability
+ansible_ssh_user=root
+openshift_cockpit_deployer_prefix='openshift3/'
+
+[nfs]
+nfs.mycluster.com
+
+[lb]
+lb.mycluster.com containerized=false
+
+[etcd]
+etcd[1:5].mycluster.com
+
+[masters]
+master1.mycluster.com openshift_ip=10.0.1.11 openshift_public_ip=10.0.1.11
+master2.mycluster.com openshift_ip=10.0.1.12 openshift_public_ip=10.0.1.12
+master3.mycluster.com openshift_ip=10.0.1.13 openshift_public_ip=10.0.1.13
+
+[nodes]
+master1.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.11 openshift_public_ip=10.0.1.11
+master2.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.12 openshift_public_ip=10.0.1.12
+master3.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.13 openshift_public_ip=10.0.1.13
+infra1.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.51 openshift_public_ip=10.0.1.51
+infra2.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.52 openshift_public_ip=10.0.1.52
+infra3.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.53 openshift_public_ip=10.0.1.53
+infra4.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.54 openshift_public_ip=10.0.1.54
+infra5.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.55 openshift_public_ip=10.0.1.55
+apps1.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.60 openshift_public_ip=10.0.1.60
+apps2.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.61 openshift_public_ip=10.0.1.61
+apps3.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.62 openshift_public_ip=10.0.1.62
+apps4.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.63 openshift_public_ip=10.0.1.63
+apps5.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.64 openshift_public_ip=10.0.1.64
+apps6.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.65 openshift_public_ip=10.0.1.65
+apps7.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.66 openshift_public_ip=10.0.1.66
+apps8.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.67 openshift_public_ip=10.0.1.67
+apps9.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.68 openshift_public_ip=10.0.1.68
+apps10.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.69 openshift_public_ip=10.0.1.69

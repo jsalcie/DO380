@@ -1,0 +1,5 @@
+[rhel-7-server-updates-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/updates
+gpgcheck = 0
+name = Remote classroom copy of RHEL Updates
+

@@ -1,0 +1,2 @@
+openshift_master_ca_certificate={'certfile': '/root/openshift-install/openshift-cluster/mycluster.com/rootCA.crt', 'keyfile': '/root/openshift-install/openshift-cluster/mycluster.com/rootCA.key'}
+

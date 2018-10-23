@@ -1,0 +1,29 @@
+[rhel-7-server-extras-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/extras
+enabled = true
+gpgcheck = false
+name = Remote classroom copy of RHEL Extras RPMS
+
+[rhel-7-server-updates-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/updates
+enabled = true
+gpgcheck = false
+name = Remote classroom copy of RHEL Updates
+
+[rhel-7-server-optional-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/rhelopt
+enabled = true
+gpgcheck = false
+name = Remote classroom copy of RHEL Optional RPMS
+
+[rhel-7-server-ose-3.6-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/ocp
+enabled = true
+gpgcheck = false
+name = Remote classroom copy of OCP RPMS
+
+[rhel-7-fast-datapath-rpms]
+baseurl = http://content.example.com/ocp3.6/x86_64/fast
+enabled = true
+gpgcheck = false
+name = Remote classroom copy of Fast Datapath RPMS

@@ -1,0 +1,62 @@
+---
+- hosts: nodes
+  become: yes
+  vars:
+    ip_address: 172.25.254.254
+    hostname: classroom.example.com
+    vol_name: etcd
+    device: /dev/vdc
+    mt: /var/lib/etcd
+
+  tasks:
+    - name: Perform DNS lookup
+      command:
+        host {{ hostname }}
+      register: dns_lookup
+
+    - name: Performing DNS reverse lookup
+      command:
+        host {{ ip_address }}
+      register: dns_reverse_lookup
+
+    - name: DNS lookup result
+      debug:
+        var: dns_lookup.stdout
+
+    - name: DNS reverse lookup result
+      debug:
+        var: dns_reverse_lookup.stdout
+
+    - name: Enable SELinux in Enforcing Mode
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: Ensuring NetworkManager is enabled and running
+      service:
+        name: NetworkManager
+        state: started
+        enabled: yes
+
+    - name: Checking Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: training.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Configure etcd
+      include_role:
+        name: make-lvol
+      vars:
+        name: '{{ vol_name }}'
+        pv_list: '{{ device }}'
+        mount_point: '{{ mt}}'
+      when: inventory_hostname in groups['etcd']
+

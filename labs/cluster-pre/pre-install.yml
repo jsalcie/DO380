@@ -1,0 +1,94 @@
+---
+- hosts: nodes
+  become: yes
+  vars:
+    ip_address: 172.25.254.254
+    hostname: classroom.example.com
+    vol_name: etcd
+    device: /dev/vdc
+    mt: /var/lib/etcd
+
+  tasks:
+    - name: Perform DNS lookup
+      command:
+        host {{ hostname }}
+      register: dns_lookup
+
+    - name: Performing DNS reverse lookup
+      command:
+        host {{ ip_address }}
+      register: dns_reverse_lookup
+
+    - name: DNS lookup result
+      debug:
+        var: dns_lookup.stdout
+
+    - name: DNS reverse lookup result
+      debug:
+        var: dns_reverse_lookup.stdout
+
+    - name: Enable SELinux in Enforcing Mode
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: Ensuring NetworkManager is enabled and running
+      service:
+        name: NetworkManager
+        state: started
+        enabled: yes
+
+    - name: Checking Fast datapath Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: rhel-7-fast-datapath-rpms.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Checking Servers extras Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: rhel-7-server-extras-rpms.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Checking Servers Optionals Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: rhel-7-server-optional-rpms.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Checking OpenShift Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: rhel-7-server-ose-3.6-rpms.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Checking Server Update Yum repositories
+      copy:
+        dest: /etc/yum.repos.d
+        src: rhel-7-server-updates-rpms.repo
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Configure Etcd
+      include_role:
+        name: make-lvol
+      vars:
+        name: '{{ vol_name }}'
+        pv_list: '{{ device }}'
+        mount_point: '{{ mt}}'
+      when: inventory_hostname in groups['etcd']
+

@@ -1,0 +1,38 @@
+---
+- name: Make sure packages are installed
+  yum: name={{ item }} state=installed
+  with_items:
+    - lvm2
+- name: Create volume group
+  lvg:
+    vg: "{{ name }}-vg"
+    pvs: "{{ pv_list }}"
+    state: present
+    force: no
+- name: Create logical volume
+  lvol:
+    vg: "{{ name }}-vg"
+    lv: "{{ name }}-lv"
+    size: "100%VG"
+    state: present
+    force: no
+    active: yes
+- name: Create filesystem for logical volume
+  filesystem:
+    fstype: xfs
+    force: no
+    dev: "/dev/mapper/{{ name}}--vg-{{ name }}--lv"
+- name: Create mount point for logical volume
+  file:
+    dest: "{{ mount_point }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+- name: Mount logical volume
+  mount:
+    name: "{{ mount_point }}"
+    src: "/dev/mapper/{{ name}}--vg-{{ name }}--lv"
+    fstype: xfs
+    state: mounted
+    boot: yes

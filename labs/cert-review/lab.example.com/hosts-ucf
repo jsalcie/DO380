@@ -1,0 +1,73 @@
+# hosts file for lab.example.com cluster
+[OSEv3:children]
+masters
+etcd
+nodes
+nfs
+lb
+
+[OSEv3:vars]
+openshift_deployment_type=openshift-enterprise
+deployment_type=openshift-enterprise
+openshift_release=v3.6
+
+openshift_master_api_port=443
+openshift_master_console_port=443
+openshift_portal_net=172.30.0.0/16
+osm_cluster_network_cidr=10.128.0.0/14
+
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=console.lab.example.com
+openshift_master_cluster_public_hostname=console.lab.example.com
+openshift_master_default_subdomain=apps.lab.example.com
+
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_users={'admin': '$apr1$4ZbKL26l$3eKL/6AQM8O94lRwTAu611', 'developer': '$apr1$4ZbKL26l$3eKL/6AQM8O94lRwTAu611'}
+
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
+openshift_hosted_registry_storage_nfs_directory=/exports
+openshift_hosted_registry_storage_nfs_options='*(rw,root_squash)'
+openshift_hosted_registry_storage_volume_name=registry
+openshift_hosted_registry_storage_volume_size=10Gi
+
+openshift_router_selector='region=infra'
+openshift_registry_selector='region=infra'
+
+openshift_set_node_ip=True
+ansible_ssh_user=root
+
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability
+openshift_cockpit_deployer_prefix='openshift3/'
+
+#running offline
+openshift_docker_additional_registries=registry.lab.example.com:5000
+openshift_docker_insecure_registries=registry.lab.example.com:5000
+openshift_docker_blocked_registries=registry.access.redhat.com,docker.io
+
+oreg_url=registry.lab.example.com:5000/openshift3/ose-${component}:${version}
+openshift_examples_modify_imagestreams=true
+
+[masters]
+master1.lab.example.com openshift_ip=172.25.250.11 openshift_public_ip=172.25.250.11
+master2.lab.example.com openshift_ip=172.25.250.12 openshift_public_ip=172.25.250.12
+master3.lab.example.com openshift_ip=172.25.250.13 openshift_public_ip=172.25.250.13
+
+[etcd]
+master[1:3].lab.example.com
+
+[nodes]
+master1.lab.example.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=172.25.250.11 openshift_public_ip=172.25.250.11
+master2.lab.example.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=172.25.250.12 openshift_public_ip=172.25.250.12
+master3.lab.example.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=172.25.250.13 openshift_public_ip=172.25.250.13
+infra1.lab.example.com openshift_node_labels="{'region': 'infra'}" openshift_ip=172.25.250.21 openshift_public_ip=172.25.250.21
+infra2.lab.example.com openshift_node_labels="{'region': 'infra'}" openshift_ip=172.25.250.22 openshift_public_ip=172.25.250.22
+infra3.lab.example.com openshift_node_labels="{'region': 'infra'}" openshift_ip=172.25.250.23 openshift_public_ip=172.25.250.23
+apps1.lab.example.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=172.25.250.31 openshift_public_ip=172.25.250.31
+apps2.lab.example.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=172.25.250.32 openshift_public_ip=172.25.250.32
+
+[nfs]
+console.lab.example.com
+
+[lb]
+console.lab.example.com containerized=false

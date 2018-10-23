@@ -1,0 +1,24 @@
+[masters]
+master1.mycluster.com openshift_ip=10.0.1.11 openshift_public_ip=10.0.1.11
+master2.mycluster.com openshift_ip=10.0.1.12 openshift_public_ip=10.0.1.12
+master3.mycluster.com openshift_ip=10.0.1.13 openshift_public_ip=10.0.1.13
+
+[nodes]
+master1.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.11 openshift_public_ip=10.0.1.11
+master2.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.12 openshift_public_ip=10.0.1.12
+master3.mycluster.com openshift_node_labels="{'region': 'master'}" openshift_schedulable=false openshift_ip=10.0.1.13 openshift_public_ip=10.0.1.13
+infra1.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.51 openshift_public_ip=10.0.1.51
+infra2.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.52 openshift_public_ip=10.0.1.52
+infra3.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.53 openshift_public_ip=10.0.1.53
+infra4.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.54 openshift_public_ip=10.0.1.54
+infra5.mycluster.com openshift_node_labels="{'region': 'infra'}" openshift_ip=10.0.1.55 openshift_public_ip=10.0.1.55
+apps1.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.60 openshift_public_ip=10.0.1.60
+apps2.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.61 openshift_public_ip=10.0.1.61
+apps3.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.62 openshift_public_ip=10.0.1.62
+apps4.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.63 openshift_public_ip=10.0.1.63
+apps5.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.64 openshift_public_ip=10.0.1.64
+apps6.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.65 openshift_public_ip=10.0.1.65
+apps7.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.66 openshift_public_ip=10.0.1.66
+apps8.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.67 openshift_public_ip=10.0.1.67
+apps9.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.68 openshift_public_ip=10.0.1.68
+apps10.mycluster.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=10.0.1.69 openshift_public_ip=10.0.1.69
