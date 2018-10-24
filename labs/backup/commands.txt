@@ -1,0 +1,3 @@
+oc new-app --name=cluster-app \
+--docker-image=registry.lab.example.com:5000/openshift/hello-openshift \
+--insecure-registry
