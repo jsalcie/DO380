@@ -1,0 +1,59 @@
+- name: "Lab: Building a Highly Available Cluster"
+  hosts: nodes
+  remote_user: root
+  vars:
+    passwd_file: /etc/origin/openshift-passwd
+    users:
+      - name: developer
+        password: openshift
+      - name: admin
+        password: redhat
+    master: master1.lab.example.com
+
+  tasks:
+  - name: Check for OCP Services
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: true
+    when: inventory_hostname in groups['masters']
+    with_items:
+    - atomic-openshift-master-controllers
+    - atomic-openshift-master-api
+
+  - name: Re-add OpenShift package exclusions
+    command: "/usr/sbin/atomic-openshift-excluder exclude"
+
+  - name: Wait for registry-console to re-deploy
+    pause:
+      seconds: 15
+      prompt: "Waiting for the registry-console to re-deploy"
+
+  - name: Edit RHEL7 Image Streams
+    copy:
+      src: files/rhel7-image-streams.json
+      dest: /usr/share/openshift/examples/image-streams/rhel7-image-streams.json
+    register: rhel7_is_result
+    when: "master in inventory_hostname"
+
+  - name: delete_openshift_is
+    command: "/usr/bin/oc delete is -n openshift --all"
+    when: rhel7_is_result.changed and "master in inventory_hostname"
+
+  - name: create_rhel7_is
+    command: "/usr/bin/oc create -f /usr/share/openshift/examples/image-streams/rhel7-image-streams.json -n openshift"
+    when: rhel7_is_result.changed and "master in inventory_hostname"
+
+  - name: Restart OpenShift Master service to apply authentication changes
+    service:
+      name: "{{ item }}"
+      state: restarted
+    with_items:
+    - atomic-openshift-master-controllers
+    - atomic-openshift-master-api
+    when: inventory_hostname in groups['masters']
+
+  - name: Waiting for the master to restart
+    pause:
+      seconds: 10
+      prompt: "Waiting for the master to settle"

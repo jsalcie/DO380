@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: nginx-gluster-template
+message: |-
+  An nginx server has been created with persistent storage for the html files using a dynamically allocated persistent volume.
+metadata:
+  annotations:
+    description: |-
+      The Google slim nginx container with the html directory persisted to GlusterFS.
+      NOTE: You must have GlusterFS CNS configured to use this template.
+    openshift.io/display-name: Nginx (Persistent)
+    tags: webserver,nginx
+    template.openshift.io/documentation-url: https://github.com/kubernetes/ingress/tree/master/images/nginx-slim
+    template.openshift.io/long-description: This template provides a nginx server.
+      The html files are stored on a persistent volume using GlusterFS.
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  name: nginx-gluster
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      template.openshift.io/expose-uri: nginx://{.spec.clusterIP}:{.spec.ports[?(.name=="web")].port}
+    labels:
+      application: ${WEBSERVER_SERVICE_NAME}
+    name: ${WEBSERVER_SERVICE_NAME}
+  spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      name: ${WEBSERVER_SERVICE_NAME}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+   name: ${WEBSERVER_SERVICE_NAME}-claim
+   labels:
+     application: ${WEBSERVER_SERVICE_NAME}
+  spec:
+   accessModes:
+    - ReadWriteMany
+   resources:
+     requests:
+          storage: ${VOLUME_CAPACITY}
+   storageClassName: glusterfs-storage
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${WEBSERVER_SERVICE_NAME}
+    labels:
+      application: ${WEBSERVER_SERVICE_NAME}
+  spec:
+    replicas: 1
+    selector:
+      name: ${WEBSERVER_SERVICE_NAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          name: ${WEBSERVER_SERVICE_NAME}
+      spec:
+        containers:
+        - capabilities: {}
+          env: {}
+          image: 'nginx-slim:0.8'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 30
+            tcpSocket:
+              port: 80
+            timeoutSeconds: 1
+          name: nginx-slim
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          securityContext:
+            capabilities: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - name: ${WEBSERVER_SERVICE_NAME}-data
+            mountPath: /usr/share/nginx/html
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: ${WEBSERVER_SERVICE_NAME}-data
+          persistentVolumeClaim:
+            claimName: ${WEBSERVER_SERVICE_NAME}-claim
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - nginx-slim
+        from:
+          kind: ImageStreamTag
+          name: nginx-slim:0.8
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status: {}
+parameters:
+- description: The name of the OpenShift Service exposed for the webserver.
+  displayName: Webserver Service Name
+  name: WEBSERVER_SERVICE_NAME
+  required: true
+  value: nginx
+- description: Volume space available for html files, e.g. 512Mi, 2Gi.
+  displayName: Volume Capacity
+  name: VOLUME_CAPACITY
+  required: true
+  value: 1Gi

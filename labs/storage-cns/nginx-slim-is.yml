@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/display-name: nginx-slim
+    openshift.io/image.insecureRepository: "true"
+  generation: 2
+  name: nginx-slim
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations:
+      description: Provides an slim implementation of an nginx webserver.
+      openshift.io/display-name: nginx-simple 0.8
+      tags: nginx
+      version: "0.8"
+    from:
+      kind: DockerImage
+      name: registry.lab.example.com:5000/google_containers/nginx-slim:0.8
+    generation: 2
+    importPolicy: {}
+    name: "0.8"
+    referencePolicy:
+      type: Source
