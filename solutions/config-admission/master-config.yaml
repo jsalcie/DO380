@@ -1,0 +1,194 @@
+admissionConfig:
+  pluginConfig:
+    BuildDefaults:
+      configuration:
+        apiVersion: v1
+        env: []
+        kind: BuildDefaultsConfig
+        resources:
+          limits: {}
+          requests: {}
+    BuildOverrides:
+      configuration:
+        apiVersion: v1
+        kind: BuildOverridesConfig
+    openshift.io/ImagePolicy:
+      configuration:
+        apiVersion: v1
+        executionRules:
+        - matchImageAnnotations:
+          - key: images.openshift.io/deny-execution
+            value: 'true'
+          name: execution-denied
+          onResources:
+          - resource: pods
+          - resource: builds
+          reject: true
+          skipOnResolutionFailure: true
+        kind: ImagePolicyConfig
+    ProjectRequestLimit:
+      configuration:
+        apiVersion: v1
+        kind: ProjectRequestLimitConfig
+        limits:
+          - maxProjects: 1
+apiLevels:
+- v1
+apiVersion: v1
+assetConfig:
+  logoutURL: ""
+  masterPublicURL: https://console.lab.example.com
+  publicURL: https://console.lab.example.com/console/
+  servingInfo:
+    bindAddress: 0.0.0.0:443
+    bindNetwork: tcp4
+    certFile: master.server.crt
+    clientCA: ""
+    keyFile: master.server.key
+    maxRequestsInFlight: 0
+    requestTimeoutSeconds: 0
+controllerLeaseTTL: 30
+controllerConfig:
+  serviceServingCert:
+    signer:
+      certFile: service-signer.crt
+      keyFile: service-signer.key
+controllers: '*'
+corsAllowedOrigins:
+  - 127.0.0.1
+  - localhost
+  - 172.25.250.11
+  - master1.lab.example.com
+  - kubernetes.default
+  - kubernetes
+  - console.lab.example.com
+  - openshift.default
+  - openshift.default.svc
+  - 172.30.0.1
+  - openshift.default.svc.cluster.local
+  - kubernetes.default.svc
+  - kubernetes.default.svc.cluster.local
+  - openshift
+dnsConfig:
+  bindAddress: 0.0.0.0:8053
+  bindNetwork: tcp4
+etcdClientInfo:
+  ca: master.etcd-ca.crt
+  certFile: master.etcd-client.crt
+  keyFile: master.etcd-client.key
+  urls:
+    - https://master1.lab.example.com:2379
+    - https://master2.lab.example.com:2379
+    - https://master3.lab.example.com:2379
+etcdStorageConfig:
+  kubernetesStoragePrefix: kubernetes.io
+  kubernetesStorageVersion: v1
+  openShiftStoragePrefix: openshift.io
+  openShiftStorageVersion: v1
+imageConfig:
+  format: openshift3/ose-${component}:${version}
+  latest: false
+kind: MasterConfig
+kubeletClientInfo:
+  ca: ca-bundle.crt
+  certFile: master.kubelet-client.crt
+  keyFile: master.kubelet-client.key
+  port: 10250
+kubernetesMasterConfig:
+  apiServerArguments: 
+    storage-backend:
+    - etcd3
+    storage-media-type:
+    - application/vnd.kubernetes.protobuf
+  controllerArguments: 
+  masterCount: 3
+  masterIP: 172.25.250.11
+  podEvictionTimeout: 
+  proxyClientInfo:
+    certFile: master.proxy-client.crt
+    keyFile: master.proxy-client.key
+  schedulerArguments: 
+  schedulerConfigFile: /etc/origin/master/scheduler.json
+  servicesNodePortRange: ""
+  servicesSubnet: 172.30.0.0/16
+  staticNodeNames: []
+masterClients:
+  externalKubernetesClientConnectionOverrides:
+    acceptContentTypes: application/vnd.kubernetes.protobuf,application/json
+    contentType: application/vnd.kubernetes.protobuf
+    burst: 400
+    qps: 200
+  externalKubernetesKubeConfig: ""
+  openshiftLoopbackClientConnectionOverrides:
+    acceptContentTypes: application/vnd.kubernetes.protobuf,application/json
+    contentType: application/vnd.kubernetes.protobuf
+    burst: 600
+    qps: 300
+  openshiftLoopbackKubeConfig: openshift-master.kubeconfig
+masterPublicURL: https://console.lab.example.com
+networkConfig:
+  clusterNetworkCIDR: 10.128.0.0/14
+  hostSubnetLength: 9
+  networkPluginName: redhat/openshift-ovs-subnet
+# serviceNetworkCIDR must match kubernetesMasterConfig.servicesSubnet
+  serviceNetworkCIDR: 172.30.0.0/16
+  externalIPNetworkCIDRs: 
+  - 0.0.0.0/0
+oauthConfig:
+  assetPublicURL: https://console.lab.example.com/console/
+  grantConfig:
+    method: auto
+  identityProviders:
+  - challenge: true
+    login: true
+    mappingMethod: claim
+    name: htpasswd_auth
+    provider:
+      apiVersion: v1
+      file: /etc/origin/master/htpasswd
+      kind: HTPasswdPasswordIdentityProvider
+  masterCA: ca-bundle.crt
+  masterPublicURL: https://console.lab.example.com
+  masterURL: https://console.lab.example.com
+  sessionConfig:
+    sessionMaxAgeSeconds: 3600
+    sessionName: ssn
+    sessionSecretsFile: /etc/origin/master/session-secrets.yaml
+  tokenConfig:
+    accessTokenMaxAgeSeconds: 86400
+    authorizeTokenMaxAgeSeconds: 500
+pauseControllers: false
+policyConfig:
+  bootstrapPolicyFile: /etc/origin/master/policy.json
+  openshiftInfrastructureNamespace: openshift-infra
+  openshiftSharedResourcesNamespace: openshift
+projectConfig:
+  defaultNodeSelector: ""
+  projectRequestMessage: ""
+  projectRequestTemplate: ""
+  securityAllocator:
+    mcsAllocatorRange: "s0:/2"
+    mcsLabelsPerProject: 5
+    uidAllocatorRange: "1000000000-1999999999/10000"
+routingConfig:
+  subdomain:  "apps.lab.example.com"
+serviceAccountConfig:
+  limitSecretReferences: False
+  managedNames:
+  - default
+  - builder
+  - deployer
+  masterCA: ca-bundle.crt
+  privateKeyFile: serviceaccounts.private.key
+  publicKeyFiles:
+  - serviceaccounts.public.key
+servingInfo:
+  bindAddress: 0.0.0.0:443
+  bindNetwork: tcp4
+  certFile: master.server.crt
+  clientCA: ca-bundle.crt
+  keyFile: master.server.key
+  maxRequestsInFlight: 500
+  requestTimeoutSeconds: 3600
+volumeConfig:
+  dynamicProvisioningEnabled: True

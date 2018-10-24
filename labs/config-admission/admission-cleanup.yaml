@@ -1,0 +1,18 @@
+---
+- hosts: masters
+  become: yes
+  tasks:
+    - name: Restore the master-config.yml file from the host. 
+      command:
+        mv /etc/origin/master/master-config-8.2.yaml /etc/origin/master/master-config.yaml
+
+    - name: Restart the master API
+      systemd: 
+        state: restarted
+        name: atomic-openshift-master-api 
+
+    - name: Restart the controllers API  
+      systemd:
+        state: restarted 
+        name: atomic-openshift-master-controllers
+

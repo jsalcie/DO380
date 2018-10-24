@@ -1,0 +1,2 @@
+[new_nodes]
+apps2.lab.example.com openshift_node_labels="{'region': 'primary', 'zone': 'local'}" openshift_ip=172.25.250.32 openshift_public_ip=172.25.250.32

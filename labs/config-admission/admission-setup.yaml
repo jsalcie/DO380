@@ -1,0 +1,23 @@
+---
+- hosts: masters
+  become: yes
+  tasks:
+    - name: Backup the master-config.yml file from the host. 
+      command:
+        mv /etc/origin/master/master-config.yaml /etc/origin/master/master-config-8.2.yaml
+
+    - name: Copy the master-config.yml file with the admission controller plug-in
+      copy:
+        src: master-config.yaml
+        dest: /etc/origin/master/master-config.yaml
+
+    - name: Restart the master API
+      systemd: 
+        state: restarted
+        name: atomic-openshift-master-api 
+
+    - name: Restart the controllers API  
+      systemd:
+        state: restarted 
+        name: atomic-openshift-master-controllers
+
