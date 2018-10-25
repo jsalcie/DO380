@@ -1,0 +1,29 @@
+---
+- hosts: masters
+  become: yes
+  tasks:
+    - name: Restore the scheduler.json file from the host. 
+      command:
+        mv /etc/origin/master/scheduler-8.7.json /etc/origin/master/scheduler.json
+
+    - name: Restore the master-config.yml file from the host. 
+      command:
+        mv /etc/origin/master/master-config-8.7.yaml /etc/origin/master/master-config.yaml
+
+    - name: Restart the master API
+      systemd: 
+        state: restarted
+        name: atomic-openshift-master-api 
+
+    - name: Restart the controllers API  
+      systemd:
+        state: restarted 
+        name: atomic-openshift-master-controllers
+
+    - name: Restore label from the apps1 node
+      command: oc label node apps1.lab.example.com destination-
+
+    - name: Restore label from the apps2 node
+      command: oc label node apps2.lab.example.com destination-
+
+

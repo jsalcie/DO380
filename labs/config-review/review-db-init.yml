@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+  labels:
+    name: mysql-pod
+spec:
+# add the nodeSelector label here
+  containers:
+    -
+      name: mysql
+      image: registry.lab.example.com:5000/rhscl/mysql-56-rhel7:latest
+      env:
+        -
+          name: "MYSQL_USER"
+          value: "mysql"
+        -
+          name: "MYSQL_PASSWORD"
+          value: "mysql"
+        -
+          name: "MYSQL_DATABASE"
+          value: "sample"
+        -
+          name: "MYSQL_ROOT_PASSWORD"
+          value: "supersecret"
+      ports:
+        -
+          name: mysql
+          containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  ports:
+  - name: 3306-tcp
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+    nodePort: 30306
+    name: mysql
+  selector: 
+    name: mysql-pod
+  type: NodePort
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: mysql-route
+  labels: 
+    name: mysql-pod
+spec:
+  host: mysql.apps.lab.example.com
+  to:
+    kind: Service
+    name: mysql

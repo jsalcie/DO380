@@ -26,11 +26,18 @@ admissionConfig:
           reject: true
           skipOnResolutionFailure: true
         kind: ImagePolicyConfig
+#add the admission controller here
     ProjectRequestLimit:
       configuration:
         apiVersion: v1
         kind: ProjectRequestLimitConfig
         limits:
+        - maxProjects: 2
+
+
+
+#
+#
 apiLevels:
 - v1
 apiVersion: v1

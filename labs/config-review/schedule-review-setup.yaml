@@ -1,0 +1,23 @@
+---
+- hosts: masters
+  become: yes
+  tasks:
+    - name: Backup the scheduler.json file from the host. 
+      command:
+        mv /etc/origin/master/scheduler.json /etc/origin/master/scheduler-8.7.json
+
+    - name: Copy the scheduler file
+      copy:
+        src: scheduler.json
+        dest: /etc/origin/master/scheduler.json
+
+    - name: Restart the master API
+      systemd: 
+        state: restarted
+        name: atomic-openshift-master-api 
+
+    - name: Restart the controllers API  
+      systemd:
+        state: restarted 
+        name: atomic-openshift-master-controllers
+
