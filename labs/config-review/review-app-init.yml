@@ -6,6 +6,9 @@ metadata:
     name: myapp-pod
 spec:
 # add the nodeSelector label here
+#
+  nodeSelector:
+    destination: ny 
   containers:
   - name: myapp
     image: registry.lab.example.com:5000/openshift/hello-openshift

@@ -29,16 +29,6 @@
         {
             "name": "CheckNodeDiskPressure"
         }, 
-        {
-            "argument": {
-                 "serviceAffinity": {
-                     "labels": [
-                         "destination"
-                     ]
-                 }
-             },
-             "name": "State"
-         }
     ], 
     "priorities": [
         {

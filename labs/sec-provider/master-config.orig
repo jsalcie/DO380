@@ -26,7 +26,6 @@ admissionConfig:
           reject: true
           skipOnResolutionFailure: true
         kind: ImagePolicyConfig
-#add the admission controller here
 apiLevels:
 - v1
 apiVersion: v1
@@ -81,7 +80,7 @@ etcdStorageConfig:
   openShiftStoragePrefix: openshift.io
   openShiftStorageVersion: v1
 imageConfig:
-  format: openshift3/ose-${component}:${version}
+  format: registry.lab.example.com:5000/openshift3/ose-${component}:${version}
   latest: false
 kind: MasterConfig
 kubeletClientInfo:

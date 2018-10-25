@@ -26,7 +26,6 @@ admissionConfig:
           reject: true
           skipOnResolutionFailure: true
         kind: ImagePolicyConfig
-#add the admission controller here
 apiLevels:
 - v1
 apiVersion: v1
@@ -81,7 +80,7 @@ etcdStorageConfig:
   openShiftStoragePrefix: openshift.io
   openShiftStorageVersion: v1
 imageConfig:
-  format: openshift3/ose-${component}:${version}
+  format: registry.lab.example.com:5000/openshift3/ose-${component}:${version}
   latest: false
 kind: MasterConfig
 kubeletClientInfo:
@@ -137,11 +136,19 @@ oauthConfig:
   - challenge: true
     login: true
     mappingMethod: claim
-    name: htpasswd_auth
+    name: ldap_auth
     provider:
       apiVersion: v1
-      file: /etc/origin/master/htpasswd
-      kind: HTPasswdPasswordIdentityProvider
+      kind: #add provider here
+      attributes:
+        id: 
+        - dn
+        preferredUsername:
+        - uid
+      insecure: true 
+      url: "ldap://services.lab.example.com:389/ou=people,dc=redhat,dc=com?uid" 
+      bindDN: ""
+      bindPassword: ""
   masterCA: ca-bundle.crt
   masterPublicURL: https://console.lab.example.com
   masterURL: https://console.lab.example.com
