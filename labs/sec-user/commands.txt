@@ -1,0 +1,7 @@
+oc process -n openshift mysql-ephemeral \
+-p MYSQL_USER=user -p MYSQL_PASSWORD=redhat -p MYSQL_ROOT_PASSWORD=redhat \
+-p MYSQL_VERSION=latest --as=system:admin | oc create -n sec-user -f -
+
+oc process -n openshift mysql-ephemeral \
+-p MYSQL_USER=user -p MYSQL_PASSWORD=redhat -p MYSQL_ROOT_PASSWORD=redhat \
+-p MYSQL_VERSION=latest --as=system:admin | oc delete -n sec-user -f -
